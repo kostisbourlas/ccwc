@@ -1,8 +1,11 @@
 package main
 
-import "fmt"
-
+import (
+	"fmt"
+	"wc/cmd"
+)
 
 func main() {
-    fmt.Println("Hello")
+	fmt.Println("Hello, World!")
+	cmd.Execute()
 }
