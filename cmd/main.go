@@ -11,6 +11,7 @@ func Execute() {
     countFlag := flag.Bool("c", false, "Size of file in Bytes")
     linesFlag := flag.Bool("l", false, "Number of lines in file")
     wordFlag := flag.Bool("w", false, "Number of word in file")
+    charFlag := flag.Bool("m", false, "Number of characters in file")
 
     file := os.Args[2]
     flag.Parse()
@@ -42,6 +43,16 @@ func Execute() {
 	    os.Exit(1)
 	}
 	fmt.Printf("%d %s\n", wordCount, file)
+	os.Exit(0)
+    }
+
+    if *charFlag == true {
+	charCount, err := countChars(file)
+	if err != nil {
+	    fmt.Println(err)
+	    os.Exit(1)
+	}
+	fmt.Printf("%d %s\n", charCount, file)
 	os.Exit(0)
     }
 }
@@ -94,4 +105,27 @@ func countWords(fileName string) (int, error) {
     }
 
     return wordCount, nil
+}
+
+func countChars(fileName string) (int, error) {
+    file, err := os.Open(fileName)
+    if err != nil {
+	return 0, err
+    }
+    defer file.Close()
+
+    var charCount int = 0
+    reader := bufio.NewReader(file)
+    for {
+	_, _, err := reader.ReadRune()
+	if err != nil {
+	    if err.Error() == "EOF" {
+		break
+	    } else {
+		return 0, err
+	    }
+	}
+	charCount++
+    }
+    return charCount, nil
 }
