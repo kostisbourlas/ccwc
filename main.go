@@ -1,6 +1,6 @@
 package main
 
-import "wc/cmd"
+import "ccwc/cmd"
 
 func main() {
 	cmd.Execute()
