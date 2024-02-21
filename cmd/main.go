@@ -10,6 +10,7 @@ import (
 func Execute() {
     countFlag := flag.Bool("c", false, "Size of file in Bytes")
     linesFlag := flag.Bool("l", false, "Number of lines in file")
+    wordFlag := flag.Bool("w", false, "Number of word in file")
 
     file := os.Args[2]
     flag.Parse()
@@ -31,6 +32,16 @@ func Execute() {
 	    os.Exit(1)
 	}
 	fmt.Printf("%d %s\n", lineCount, file)
+	os.Exit(0)
+    }
+
+    if *wordFlag == true {
+	wordCount, err := countWords(file)
+	if err != nil {
+	    fmt.Println(err)
+	    os.Exit(1)
+	}
+	fmt.Printf("%d %s\n", wordCount, file)
 	os.Exit(0)
     }
 }
@@ -56,5 +67,31 @@ func countLines(fileName string) (int, error) {
 	lineCount++
     }
 
+    if err := scanner.Err(); err != nil {
+	return 0, err
+    }
+
     return lineCount, nil
+}
+
+func countWords(fileName string) (int, error) {
+    file, err := os.Open(fileName)
+    if err != nil {
+	return 0, err
+    }
+    defer file.Close()
+
+    scanner := bufio.NewScanner(file)
+    scanner.Split(bufio.ScanWords) 
+
+    var wordCount int
+    for scanner.Scan() {
+	wordCount++
+    }
+
+    if err := scanner.Err(); err != nil {
+	return 0, err
+    }
+
+    return wordCount, nil
 }
