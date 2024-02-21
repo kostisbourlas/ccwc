@@ -13,7 +13,13 @@ func Execute() {
     wordFlag := flag.Bool("w", false, "Number of word in file")
     charFlag := flag.Bool("m", false, "Number of characters in file")
 
-    file := os.Args[2]
+    var file string
+    if len(os.Args) != 3 {
+	fmt.Println("Specify a file and a flag.")
+	os.Exit(1)
+    }
+
+    file = os.Args[2]
     flag.Parse()
     
     switch {
