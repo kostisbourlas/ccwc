@@ -14,12 +14,12 @@ func Execute() {
     charFlag := flag.Bool("m", false, "Number of characters in file")
 
     var file string
-    if len(os.Args) != 3 {
-	fmt.Println("Specify a file and a flag.")
-	os.Exit(1)
+    if len(os.Args) == 3 {
+	file = os.Args[2]
     }
-
-    file = os.Args[2]
+    if len(os.Args) == 2 {
+	file = os.Args[1]
+    }
     flag.Parse()
     
     switch {
@@ -57,6 +57,25 @@ func Execute() {
 	    os.Exit(1)
 	}
 	fmt.Printf("%d %s\n", charCount, file)
+	os.Exit(0)
+    default:
+	size, err := getFileSize(file)
+	if err != nil {
+	    fmt.Println(err)
+	    os.Exit(1)
+	}
+	lineCount, err := countLines(file)
+	if err != nil {
+	    fmt.Println(err)
+	    os.Exit(1)
+	}
+	wordCount, err := countWords(file)
+	if err != nil {
+	    fmt.Println(err)
+	    os.Exit(1)
+	}
+
+	fmt.Printf("  %d  %d %d %s\n", lineCount, wordCount, size, file)
 	os.Exit(0)
     }
 }
