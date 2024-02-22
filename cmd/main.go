@@ -13,64 +13,65 @@ func Execute() {
     wordFlag := flag.Bool("w", false, "Number of word in file")
     charFlag := flag.Bool("m", false, "Number of characters in file")
 
-    var file string
-    file = os.Args[len(os.Args)-1]
+    var fileName string
+    fileName = os.Args[len(os.Args)-1]
     flag.Parse()
     
     switch {
     case *countFlag == true:
-	size, err := getFileSize(file)
+	size, err := getFileSize(fileName)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)	
 	}
-	fmt.Printf("%d %s\n", size, file)
+	fmt.Printf("%d %s\n", size, fileName)
 	os.Exit(0)
 
     case *linesFlag == true:
-	lineCount, err := countLines(file)
+	lineCount, err := countLines(fileName)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
-	fmt.Printf("%d %s\n", lineCount, file)
+	fmt.Printf("%d %s\n", lineCount, fileName)
 	os.Exit(0)
 
     case *wordFlag == true:
-	wordCount, err := countWords(file)
+	wordCount, err := countWords(fileName)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
-	fmt.Printf("%d %s\n", wordCount, file)
+	fmt.Printf("%d %s\n", wordCount, fileName)
 	os.Exit(0)
     
     case *charFlag == true:
-	charCount, err := countChars(file)
+	charCount, err := countChars(fileName)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
-	fmt.Printf("%d %s\n", charCount, file)
+	fmt.Printf("%d %s\n", charCount, fileName)
 	os.Exit(0)
+
     default:
-	size, err := getFileSize(file)
+	size, err := getFileSize(fileName)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
-	lineCount, err := countLines(file)
+	lineCount, err := countLines(fileName)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
-	wordCount, err := countWords(file)
+	wordCount, err := countWords(fileName)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
 
-	fmt.Printf("  %d  %d %d %s\n", lineCount, wordCount, size, file)
+	fmt.Printf("  %d  %d %d %s\n", lineCount, wordCount, size, fileName)
 	os.Exit(0)
     }
 }
