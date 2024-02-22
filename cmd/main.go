@@ -14,12 +14,7 @@ func Execute() {
     charFlag := flag.Bool("m", false, "Number of characters in file")
 
     var file string
-    if len(os.Args) == 3 {
-	file = os.Args[2]
-    }
-    if len(os.Args) == 2 {
-	file = os.Args[1]
-    }
+    file = os.Args[len(os.Args)-1]
     flag.Parse()
     
     switch {
