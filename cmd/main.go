@@ -91,14 +91,18 @@ func countLines(fileName string) (int, error) {
     }
     defer file.Close()
 
-    var lineCount int
-    scanner := bufio.NewScanner(file)
-    for scanner.Scan() {
+    var lineCount int 
+    reader := bufio.NewReader(file)
+    for {
+	_, _, err := reader.ReadLine()
+	if err != nil {
+	    if err.Error() == "EOF" {
+		break
+	    } else {
+		return 0, err
+	    }
+	}
 	lineCount++
-    }
-
-    if err := scanner.Err(); err != nil {
-	return 0, err
     }
 
     return lineCount, nil
