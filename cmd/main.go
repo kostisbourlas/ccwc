@@ -16,6 +16,13 @@ func Execute() {
     var fileName string
     fileName = os.Args[len(os.Args)-1]
     flag.Parse()
+
+    file, err := os.Open(fileName)
+    if err != nil {
+	fmt.Println(err)
+	os.Exit(1)
+    }
+    defer file.Close()
     
     switch {
     case *countFlag == true:
@@ -28,7 +35,7 @@ func Execute() {
 	os.Exit(0)
 
     case *linesFlag == true:
-	lineCount, err := countLines(fileName)
+	lineCount, err := countLines(file)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
@@ -37,7 +44,7 @@ func Execute() {
 	os.Exit(0)
 
     case *wordFlag == true:
-	wordCount, err := countWords(fileName)
+	wordCount, err := countWords(file)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
@@ -46,7 +53,7 @@ func Execute() {
 	os.Exit(0)
     
     case *charFlag == true:
-	charCount, err := countChars(fileName)
+	charCount, err := countChars(file)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
@@ -60,12 +67,13 @@ func Execute() {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
-	lineCount, err := countLines(fileName)
+	lineCount, err := countLines(file)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
-	wordCount, err := countWords(fileName)
+	file.Seek(0, 0)
+	wordCount, err := countWords(file)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
@@ -84,13 +92,7 @@ func getFileSize(fileName string) (int, error) {
     return int(fileStats.Size()), nil
 }
 
-func countLines(fileName string) (int, error) {
-    file, err := os.Open(fileName)
-    if err != nil {
-	return 0, err
-    }
-    defer file.Close()
-
+func countLines(file *os.File) (int, error) {
     var lineCount int 
     reader := bufio.NewReader(file)
     for {
@@ -108,13 +110,7 @@ func countLines(fileName string) (int, error) {
     return lineCount, nil
 }
 
-func countWords(fileName string) (int, error) {
-    file, err := os.Open(fileName)
-    if err != nil {
-	return 0, err
-    }
-    defer file.Close()
-
+func countWords(file *os.File) (int, error) {
     scanner := bufio.NewScanner(file)
     scanner.Split(bufio.ScanWords) 
 
@@ -130,13 +126,7 @@ func countWords(fileName string) (int, error) {
     return wordCount, nil
 }
 
-func countChars(fileName string) (int, error) {
-    file, err := os.Open(fileName)
-    if err != nil {
-	return 0, err
-    }
-    defer file.Close()
-
+func countChars(file *os.File) (int, error) {
     var charCount int = 0
     reader := bufio.NewReader(file)
     for {
