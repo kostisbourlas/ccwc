@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 )
 
 func Execute() {
@@ -93,8 +95,8 @@ func getFileSize(fileName string) (int, error) {
 }
 
 func countLines(file *os.File) (int, error) {
-    var lineCount int 
     reader := bufio.NewReader(file)
+    var lineCount int 
     for {
 	_, _, err := reader.ReadLine()
 	if err != nil {
@@ -111,24 +113,25 @@ func countLines(file *os.File) (int, error) {
 }
 
 func countWords(file *os.File) (int, error) {
-    scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanWords) 
-
+    reader := bufio.NewReader(file)
     var wordCount int
-    for scanner.Scan() {
-	wordCount++
+    for {
+        line, err := reader.ReadString('\n')
+        if err != nil && err != io.EOF {
+            return 0, err
+        }
+        words := strings.Fields(line)
+        wordCount += len(words)
+        if err == io.EOF {
+            break
+        }
     }
-
-    if err := scanner.Err(); err != nil {
-	return 0, err
-    }
-
     return wordCount, nil
 }
 
 func countChars(file *os.File) (int, error) {
-    var charCount int = 0
     reader := bufio.NewReader(file)
+    var charCount int 
     for {
 	_, _, err := reader.ReadRune()
 	if err != nil {
