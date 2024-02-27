@@ -26,6 +26,7 @@ func Execute() {
     }
     defer file.Close()
     
+    reader := bufio.NewReader(file)
     switch {
     case *countFlag == true:
 	size, err := getFileSize(fileName)
@@ -37,7 +38,7 @@ func Execute() {
 	os.Exit(0)
 
     case *linesFlag == true:
-	lineCount, err := countLines(file)
+	lineCount, err := countLines(*reader)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
@@ -46,7 +47,7 @@ func Execute() {
 	os.Exit(0)
 
     case *wordFlag == true:
-	wordCount, err := countWords(file)
+	wordCount, err := countWords(*reader)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
@@ -55,7 +56,7 @@ func Execute() {
 	os.Exit(0)
     
     case *charFlag == true:
-	charCount, err := countChars(file)
+	charCount, err := countChars(*reader)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
@@ -69,13 +70,13 @@ func Execute() {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
-	lineCount, err := countLines(file)
+	lineCount, err := countLines(*reader)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
 	}
 	file.Seek(0, 0)
-	wordCount, err := countWords(file)
+	wordCount, err := countWords(*reader)
 	if err != nil {
 	    fmt.Println(err)
 	    os.Exit(1)
@@ -94,8 +95,7 @@ func getFileSize(fileName string) (int, error) {
     return int(fileStats.Size()), nil
 }
 
-func countLines(file *os.File) (int, error) {
-    reader := bufio.NewReader(file)
+func countLines(reader bufio.Reader) (int, error) {
     var lineCount int 
     for {
 	_, _, err := reader.ReadLine()
@@ -112,8 +112,7 @@ func countLines(file *os.File) (int, error) {
     return lineCount, nil
 }
 
-func countWords(file *os.File) (int, error) {
-    reader := bufio.NewReader(file)
+func countWords(reader bufio.Reader) (int, error) {
     var wordCount int
     for {
         line, err := reader.ReadString('\n')
@@ -129,8 +128,7 @@ func countWords(file *os.File) (int, error) {
     return wordCount, nil
 }
 
-func countChars(file *os.File) (int, error) {
-    reader := bufio.NewReader(file)
+func countChars(reader bufio.Reader) (int, error) {
     var charCount int 
     for {
 	_, _, err := reader.ReadRune()
